@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard — DriveEase Fleet Operations</title>
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body class="bg-light">
+
+  <!-- Admin Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-driveease border-bottom bg-white">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand navbar-brand-custom" href="/index.html">
+        <div class="brand-icon-box">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <span>DriveEase <span class="badge bg-dark fw-normal fs-6 ms-2">Admin Portal</span></span>
+      </a>
+
+      <div class="d-flex align-items-center gap-3 ms-auto" id="navbar-auth-actions">
+        <!-- Rendered by app.js -->
+      </div>
+    </div>
+  </nav>
+
+  <!-- Admin Layout Wrapper -->
+  <div class="dashboard-wrapper">
+    <!-- Sidebar -->
+    <aside class="dashboard-sidebar">
+      <div class="sidebar-heading">Operations Menu</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link active" data-tab="overview" onclick="showAdminTab('overview'); return false;">
+            <i class="bi bi-speedometer2"></i>
+            <span>Overview & KPIs</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link" data-tab="vehicles" onclick="showAdminTab('vehicles'); return false;">
+            <i class="bi bi-car-front-fill"></i>
+            <span>Vehicle Fleet</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link" data-tab="bookings" onclick="showAdminTab('bookings'); return false;">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>All Bookings</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="#" class="sidebar-nav-link" data-tab="customers" onclick="showAdminTab('customers'); return false;">
+            <i class="bi bi-people-fill"></i>
+            <span>Customers</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-heading">Public Links</div>
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-item">
+          <a href="/vehicles.html" target="_blank" class="sidebar-nav-link">
+            <i class="bi bi-box-arrow-up-right"></i>
+            <span>Live Catalog</span>
+          </a>
+        </li>
+        <li class="sidebar-nav-item">
+          <a href="/index.html" class="sidebar-nav-link">
+            <i class="bi bi-house"></i>
+            <span>Home Page</span>
+          </a>
+        </li>
+      </ul>
+
+      <div class="sidebar-footer">
+        <div class="small text-muted mb-2">Logged in as Administrator</div>
+        <button class="btn btn-sm btn-outline-danger w-100" onclick="DriveEaseAuth.logout()">
+          <i class="bi bi-box-arrow-right me-1"></i> Sign Out
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Workspace -->
+    <main class="dashboard-content">
+
+      <!-- SECTION 1: OVERVIEW -->
+      <section id="section-overview">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="dashboard-header-title">System Overview</h1>
+            <p class="text-muted mb-0">High-level rental metrics, active inventory, and real-time revenue performance.</p>
+          </div>
+          <button class="btn btn-de-primary" onclick="openAddVehicleModal()">
+            <i class="bi bi-plus-lg me-1"></i> Add Fleet Vehicle
+          </button>
+        </div>
+
+        <!-- 5 KPI Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-sm-6 col-xl-4 col-xxl">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Total Fleet</span>
+                <div class="kpi-icon-box kpi-icon-navy"><i class="bi bi-car-front"></i></div>
+              </div>
+              <div class="kpi-value" id="metric-total-vehicles">0</div>
+              <div class="kpi-subtext">Vehicles registered</div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-4 col-xxl">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Available for Rent</span>
+                <div class="kpi-icon-box kpi-icon-success"><i class="bi bi-check-circle"></i></div>
+              </div>
+              <div class="kpi-value" id="metric-available-vehicles">0</div>
+              <div class="kpi-subtext">Ready for checkout</div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-4 col-xxl">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Registered Customers</span>
+                <div class="kpi-icon-box kpi-icon-info"><i class="bi bi-people"></i></div>
+              </div>
+              <div class="kpi-value" id="metric-total-customers">0</div>
+              <div class="kpi-subtext">Verified accounts</div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-4 col-xxl">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Active Bookings</span>
+                <div class="kpi-icon-box kpi-icon-warning"><i class="bi bi-clock-history"></i></div>
+              </div>
+              <div class="kpi-value" id="metric-active-bookings">0</div>
+              <div class="kpi-subtext">Currently on the road</div>
+            </div>
+          </div>
+
+          <div class="col-sm-6 col-xl-4 col-xxl">
+            <div class="kpi-card">
+              <div class="kpi-card-top">
+                <span class="kpi-label">Total Revenue</span>
+                <div class="kpi-icon-box kpi-icon-success"><i class="bi bi-cash-stack"></i></div>
+              </div>
+              <div class="kpi-value text-success" id="metric-total-revenue">$0.00</div>
+              <div class="kpi-subtext">Excludes cancelled rides</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Bookings Table -->
+        <div class="dashboard-card">
+          <div class="dashboard-card-header">
+            <h3 class="dashboard-card-title">Recent Rental Bookings</h3>
+            <button class="btn btn-sm btn-de-outline" onclick="showAdminTab('bookings')">View All</button>
+          </div>
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>Customer</th>
+                  <th>Vehicle</th>
+                  <th>Dates</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="recent-bookings-tbody">
+                <tr><td colspan="6" class="text-center py-4 text-muted">Loading recent bookings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 2: FLEET MANAGEMENT -->
+      <section id="section-vehicles" class="d-none">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="dashboard-header-title">Fleet Management</h1>
+            <p class="text-muted mb-0">Add, edit, remove vehicles, classify premium tiers, and toggle availability in real-time.</p>
+          </div>
+          <button class="btn btn-de-primary" onclick="openAddVehicleModal()">
+            <i class="bi bi-plus-lg me-1"></i> Add New Vehicle
+          </button>
+        </div>
+
+        <!-- Fleet Quick Filter Bar -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3 p-3 bg-white border rounded-3">
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <span class="small text-muted fw-semibold">Origin:</span>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary active" id="admin-origin-all" onclick="setAdminOriginFilter('')">All</button>
+              <button class="btn btn-outline-secondary" id="admin-origin-in" onclick="setAdminOriginFilter('INDIAN')">🇮🇳 Indian</button>
+              <button class="btn btn-outline-secondary" id="admin-origin-intl" onclick="setAdminOriginFilter('INTERNATIONAL')">🌐 Intl</button>
+            </div>
+
+            <span class="small text-muted fw-semibold ms-2">Tier:</span>
+            <div class="btn-group btn-group-sm">
+              <button class="btn btn-outline-secondary active" id="admin-tier-all" onclick="setAdminTierFilter('')">All</button>
+              <button class="btn btn-outline-secondary" id="admin-tier-prem" onclick="setAdminTierFilter('PREMIUM')">⭐ Premium</button>
+              <button class="btn btn-outline-secondary" id="admin-tier-std" onclick="setAdminTierFilter('STANDARD')">Standard</button>
+            </div>
+          </div>
+
+          <div class="input-group input-group-sm" style="max-width: 260px;">
+            <span class="input-group-text bg-white"><i class="bi bi-search text-muted"></i></span>
+            <input type="text" class="form-control" id="admin-fleet-search" placeholder="Search fleet..." oninput="filterAdminFleet()">
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Photo</th>
+                  <th>Brand & Model</th>
+                  <th>Origin & Category</th>
+                  <th>Station Hub</th>
+                  <th>Daily Rate</th>
+                  <th>Premium Tier</th>
+                  <th>Status</th>
+                  <th class="text-end">Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fleet-tbody">
+                <tr><td colspan="8" class="text-center py-4 text-muted">Loading fleet...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 3: BOOKINGS MANAGEMENT -->
+      <section id="section-bookings" class="d-none">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="dashboard-header-title">Booking Management</h1>
+            <p class="text-muted mb-0">Oversee customer reservations, approve schedules, and track vehicle returns.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Reference</th>
+                  <th>Customer</th>
+                  <th>Vehicle</th>
+                  <th>Dates</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                  <th>Update Lifecycle</th>
+                </tr>
+              </thead>
+              <tbody id="bookings-tbody">
+                <tr><td colspan="7" class="text-center py-4 text-muted">Loading bookings...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- SECTION 4: CUSTOMERS DIRECTORY -->
+      <section id="section-customers" class="d-none">
+        <div class="dashboard-header">
+          <div>
+            <h1 class="dashboard-header-title">Customer Directory</h1>
+            <p class="text-muted mb-0">Registered clients, contact details, and account creation dates.</p>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <div class="table-responsive">
+            <table class="table-custom">
+              <thead>
+                <tr>
+                  <th>Full Name</th>
+                  <th>Email</th>
+                  <th>Phone Number</th>
+                  <th>Role</th>
+                  <th>Registered On</th>
+                </tr>
+              </thead>
+              <tbody id="customers-tbody">
+                <tr><td colspan="5" class="text-center py-4 text-muted">Loading customer records...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Add / Edit Vehicle Modal -->
+  <div class="modal fade" id="vehicleModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold" id="vehicle-modal-title">Add New Fleet Vehicle</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="vehicle-form">
+          <div class="modal-body p-4">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label-custom">Brand Name</label>
+                <input type="text" class="form-control form-control-custom" id="vehicle-brand" placeholder="e.g. Porsche, BMW, Ducati" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Model Name</label>
+                <input type="text" class="form-control form-control-custom" id="vehicle-model" placeholder="e.g. 911 Carrera, M5, Panigale" required>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label-custom">Category</label>
+                <select class="form-select form-control-custom" id="vehicle-category" required>
+                  <option value="CAR">Car</option>
+                  <option value="BIKE">Motorbike / Bike</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom">Fuel / Powertrain</label>
+                <select class="form-select form-control-custom" id="vehicle-fuel" required>
+                  <option value="PETROL">Petrol</option>
+                  <option value="DIESEL">Diesel</option>
+                  <option value="ELECTRIC">Electric</option>
+                  <option value="HYBRID">Hybrid</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label-custom">Transmission</label>
+                <select class="form-select form-control-custom" id="vehicle-transmission" required>
+                  <option value="AUTOMATIC">Automatic</option>
+                  <option value="MANUAL">Manual</option>
+                </select>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label-custom">Daily Rental Rate (Base: ₹ INR)</label>
+                <input type="number" step="0.01" class="form-control form-control-custom" id="vehicle-rate" placeholder="3000.00" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Refundable Security Deposit (Base: ₹ INR)</label>
+                <input type="number" step="0.01" class="form-control form-control-custom" id="vehicle-deposit" placeholder="5000.00" required>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label-custom">Vehicle Origin</label>
+                <select class="form-select form-control-custom" id="vehicle-origin" required>
+                  <option value="INDIAN">🇮🇳 Indian Fleet</option>
+                  <option value="INTERNATIONAL">🌐 International Fleet</option>
+                </select>
+              </div>
+              <div class="col-md-6 d-flex align-items-center pt-3">
+                <div class="form-check form-switch mb-0">
+                  <input class="form-check-input" type="checkbox" role="switch" id="vehicle-is-premium">
+                  <label class="form-check-label fw-bold text-dark small" for="vehicle-is-premium">
+                    <i class="bi bi-stars text-warning me-1"></i> Classify as Premium Fleet
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="form-label-custom">High-Res Image URL</label>
+                <input type="url" class="form-control form-control-custom" id="vehicle-image" placeholder="https://images.unsplash.com/..." required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Station Location Hub</label>
+                <input type="text" class="form-control form-control-custom" id="vehicle-location" placeholder="Connaught Place Hub" required>
+              </div>
+
+              <!-- Car Specific Fields -->
+              <div id="car-specific-fields" class="row g-3 mt-1">
+                <div class="col-md-4">
+                  <label class="form-label-custom">Seating Capacity</label>
+                  <input type="number" class="form-control form-control-custom" id="car-seats" value="5" min="2" max="9">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label-custom">Luggage Capacity (Bags)</label>
+                  <input type="number" class="form-control form-control-custom" id="car-luggage" value="2" min="1" max="6">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label-custom">Body Style</label>
+                  <select class="form-select form-control-custom" id="car-body">
+                    <option value="Sedan">Sedan</option>
+                    <option value="Sports Coupe">Sports Coupe</option>
+                    <option value="Luxury SUV">Luxury SUV</option>
+                    <option value="Estate">Estate / Avant</option>
+                    <option value="Convertible">Convertible</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="car-ac" checked>
+                    <label class="form-check-label small" for="car-ac">Equipped with Dual-Zone Air Conditioning</label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Bike Specific Fields -->
+              <div id="bike-specific-fields" class="row g-3 mt-1 d-none">
+                <div class="col-md-6">
+                  <label class="form-label-custom">Engine Displacement (cc)</label>
+                  <input type="number" class="form-control form-control-custom" id="bike-cc" value="1000" min="100" max="2500">
+                </div>
+                <div class="col-md-6">
+                  <label class="form-label-custom">Bike Style</label>
+                  <select class="form-select form-control-custom" id="bike-type">
+                    <option value="Superbike">Superbike</option>
+                    <option value="Cruiser">Cruiser</option>
+                    <option value="Adventure Touring">Adventure Touring</option>
+                    <option value="Modern Classic">Modern Classic</option>
+                  </select>
+                </div>
+                <div class="col-12">
+                  <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="bike-helmet" checked>
+                    <label class="form-check-label small" for="bike-helmet">Safety Helmets Included with Rental</label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label-custom">Vehicle Description</label>
+                <textarea class="form-control form-control-custom" id="vehicle-desc" rows="2" placeholder="Describe vehicle performance, styling, and pedigree"></textarea>
+              </div>
+
+              <div class="col-12">
+                <label class="form-label-custom">Features & Amenities (Comma Separated)</label>
+                <input type="text" class="form-control form-control-custom" id="vehicle-features" placeholder="e.g. Carbon Brakes, Burmester Sound, Adaptive Suspension, Heated Seats">
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-top">
+            <button type="button" class="btn btn-de-outline" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-de-primary" id="save-vehicle-btn">Save Vehicle</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Application & Admin JS -->
+  <script src="/js/app.js"></script>
+  <script src="/js/admin.js"></script>
+</body>
+</html>

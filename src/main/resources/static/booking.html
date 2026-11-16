@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Booking — DriveEase</title>
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+
+  <!-- Simple Header -->
+  <header class="py-3 bg-white border-bottom">
+    <div class="container d-flex justify-content-between align-items-center">
+      <a class="navbar-brand navbar-brand-custom" href="/index.html">
+        <div class="brand-icon-box">
+          <i class="bi bi-car-front-fill"></i>
+        </div>
+        <span>DriveEase</span>
+      </a>
+      <div class="d-flex align-items-center gap-2">
+        <!-- Currency Selector Dropdown -->
+        <div class="dropdown" id="currency-selector-wrapper">
+          <button class="btn btn-sm currency-dropdown-btn dropdown-toggle d-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill shadow-none"
+                  type="button" data-bs-toggle="dropdown" aria-expanded="false" id="active-currency-btn">
+            <span id="active-currency-flag">🇮🇳</span>
+            <span id="active-currency-text">INR (₹)</span>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1" style="min-width: 180px; border-radius: 12px; font-size: 0.85rem;">
+            <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size: 0.68rem; letter-spacing: 0.6px;">Select Currency</h6></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('INR')"><span>🇮🇳 INR</span><span class="fw-bold text-dark">₹ Rupee</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('USD')"><span>🇺🇸 USD</span><span class="fw-bold text-dark">$ Dollar</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('EUR')"><span>🇪🇺 EUR</span><span class="fw-bold text-dark">€ Euro</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('GBP')"><span>🇬🇧 GBP</span><span class="fw-bold text-dark">£ Pound</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('AED')"><span>🇦🇪 AED</span><span class="fw-bold text-dark">AED Dirham</span></button></li>
+          </ul>
+        </div>
+
+        <div class="d-flex align-items-center gap-2" id="navbar-auth-actions">
+          <!-- Auth state -->
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="py-5">
+    <div class="container">
+      <!-- Breadcrumb -->
+      <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb small">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item"><a href="/vehicles.html">Vehicles</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Booking Confirmation</li>
+        </ol>
+      </nav>
+
+      <div class="row g-4" id="checkout-container">
+        <!-- Left: Booking Form & Customer Info -->
+        <div class="col-lg-7">
+          <!-- Step 1: Customer Details -->
+          <div class="card p-4 border rounded-3 mb-4 bg-white shadow-sm">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+              <span class="badge bg-dark rounded-circle p-2 px-3">1</span>
+              <span>Renter Details</span>
+            </h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label-custom">Full Name</label>
+                <input type="text" class="form-control form-control-custom" id="renter-name" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Email Address</label>
+                <input type="email" class="form-control form-control-custom" id="renter-email" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Contact Phone</label>
+                <input type="text" class="form-control form-control-custom" id="renter-phone" readonly>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Driving License Status</label>
+                <div class="form-control form-control-custom bg-light text-success fw-semibold">
+                  <i class="bi bi-check-circle-fill me-1"></i> Verified & Eligible
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Logistics & Schedule -->
+          <div class="card p-4 border rounded-3 mb-4 bg-white shadow-sm">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+              <span class="badge bg-dark rounded-circle p-2 px-3">2</span>
+              <span>Pickup & Return Logistics</span>
+            </h5>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label-custom">Pickup Date</label>
+                <input type="date" class="form-control form-control-custom" id="checkout-pickup-date" onchange="recalculateCheckout()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Return Date</label>
+                <input type="date" class="form-control form-control-custom" id="checkout-return-date" onchange="recalculateCheckout()">
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Pickup Station</label>
+                <select class="form-select form-control-custom" id="checkout-pickup-loc">
+                  <option value="Indira Gandhi International Airport (DEL)">Indira Gandhi International Airport (DEL)</option>
+                  <option value="Connaught Place Hub">Connaught Place Hub</option>
+                  <option value="Cyber City Gurgaon">Cyber City Gurgaon</option>
+                  <option value="Mumbai Chhatrapati Shivaji Airport (BOM)">Mumbai Chhatrapati Shivaji Airport (BOM)</option>
+                  <option value="Bangalore Kempegowda Airport (BLR)">Bangalore Kempegowda Airport (BLR)</option>
+                  <option value="Downtown Executive Hub">Downtown Executive Hub</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label-custom">Dropoff Station</label>
+                <select class="form-select form-control-custom" id="checkout-dropoff-loc">
+                  <option value="Indira Gandhi International Airport (DEL)">Indira Gandhi International Airport (DEL)</option>
+                  <option value="Connaught Place Hub">Connaught Place Hub</option>
+                  <option value="Cyber City Gurgaon">Cyber City Gurgaon</option>
+                  <option value="Mumbai Chhatrapati Shivaji Airport (BOM)">Mumbai Chhatrapati Shivaji Airport (BOM)</option>
+                  <option value="Bangalore Kempegowda Airport (BLR)">Bangalore Kempegowda Airport (BLR)</option>
+                  <option value="Downtown Executive Hub">Downtown Executive Hub</option>
+                  <option value="Suburban Plaza">Suburban Plaza</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label-custom">Special Requests or Notes</label>
+                <textarea class="form-control form-control-custom" id="checkout-notes" rows="2" placeholder="e.g. Baby seat, GPS preset, extra helmet"></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Payment Method -->
+          <div class="card p-4 border rounded-3 mb-4 bg-white shadow-sm">
+            <h5 class="fw-bold mb-3 d-flex align-items-center gap-2">
+              <span class="badge bg-dark rounded-circle p-2 px-3">3</span>
+              <span>Payment Selection</span>
+            </h5>
+
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="card p-3 border rounded-3 text-center cursor-pointer h-100 payment-option selected">
+                  <input type="radio" name="payment-method" value="CREDIT_CARD" class="d-none" checked>
+                  <i class="bi bi-credit-card-2-front fs-3 text-dark mb-1 d-block"></i>
+                  <span class="fw-bold small text-dark d-block">Credit Card</span>
+                  <span class="text-muted" style="font-size: 0.72rem;">Visa, MC, Amex</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="card p-3 border rounded-3 text-center cursor-pointer h-100 payment-option">
+                  <input type="radio" name="payment-method" value="UPI" class="d-none">
+                  <i class="bi bi-qr-code fs-3 text-dark mb-1 d-block"></i>
+                  <span class="fw-bold small text-dark d-block">UPI / Instant</span>
+                  <span class="text-muted" style="font-size: 0.72rem;">Zero transaction fee</span>
+                </label>
+              </div>
+              <div class="col-md-4">
+                <label class="card p-3 border rounded-3 text-center cursor-pointer h-100 payment-option">
+                  <input type="radio" name="payment-method" value="PAY_ON_PICKUP" class="d-none">
+                  <i class="bi bi-shop fs-3 text-dark mb-1 d-block"></i>
+                  <span class="fw-bold small text-dark d-block">Pay on Pickup</span>
+                  <span class="text-muted" style="font-size: 0.72rem;">At rental counter</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="p-3 bg-light rounded-3 mt-3 small text-muted d-flex align-items-center gap-2">
+              <i class="bi bi-lock-fill text-success fs-5"></i>
+              <span>All payment transmissions are 256-bit SSL encrypted. Security deposit is pre-authorized and refunded immediately upon return.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Order Summary Panel -->
+        <div class="col-lg-5">
+          <div class="booking-summary-card">
+            <h5 class="fw-bold mb-3">Rental Summary</h5>
+
+            <!-- Vehicle Preview Box -->
+            <div class="d-flex align-items-center gap-3 p-3 bg-light rounded-3 border mb-3">
+              <img id="checkout-vehicle-img" src="" alt="Vehicle" class="rounded-3" style="width: 85px; height: 60px; object-fit: cover; background: #17191D;">
+              <div>
+                <span class="badge bg-dark small mb-1" id="checkout-vehicle-cat">CAR</span>
+                <h6 class="fw-bold mb-0 text-dark" id="checkout-vehicle-name">Vehicle Name</h6>
+                <span class="small text-muted" id="checkout-vehicle-specs">Automatic · Petrol</span>
+              </div>
+            </div>
+
+            <!-- Pricing Breakdown -->
+            <div class="p-3 bg-white rounded-3 border mb-3">
+              <div class="price-row">
+                <span>Rental Duration</span>
+                <span class="fw-semibold text-dark" id="summary-days">3 Days</span>
+              </div>
+              <div class="price-row">
+                <span>Daily Rate</span>
+                <span class="fw-semibold text-dark" id="summary-rate">$0.00</span>
+              </div>
+              <div class="price-row">
+                <span>Subtotal</span>
+                <span class="fw-semibold text-dark" id="summary-subtotal">$0.00</span>
+              </div>
+              <div class="price-row text-success" id="summary-discount-row" style="display:none;">
+                <span>Weekly Saver Discount</span>
+                <span class="fw-bold" id="summary-discount">-$0.00</span>
+              </div>
+              <div class="price-row">
+                <span>State Tax & Fee (10%)</span>
+                <span class="fw-semibold text-dark" id="summary-tax">$0.00</span>
+              </div>
+              <div class="price-row">
+                <span>Refundable Deposit</span>
+                <span class="fw-semibold text-dark" id="summary-deposit">$200.00</span>
+              </div>
+              <div class="price-row price-row-total">
+                <span>Total Due</span>
+                <span class="text-dark" id="summary-total">$0.00</span>
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-de-primary w-100 py-3 justify-content-center fs-6" id="confirm-booking-btn" onclick="submitFinalBooking()">
+              <i class="bi bi-check-circle-fill me-1"></i> Confirm & Authorize Rental
+            </button>
+
+            <div class="text-center mt-3 small text-muted">
+              By confirming, you agree to DriveEase Rental Terms.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Success Confirmation Modal -->
+  <div class="modal fade" id="bookingSuccessModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-body text-center p-5">
+          <div class="mb-3">
+            <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success" style="width: 72px; height: 72px;">
+              <i class="bi bi-check-lg fs-1"></i>
+            </div>
+          </div>
+          <h3 class="fw-bold text-dark mb-1">Booking Confirmed!</h3>
+          <p class="text-muted small mb-4">Your vehicle reservation has been authorized and secured in our fleet system.</p>
+
+          <div class="p-3 bg-light rounded-3 border text-start mb-4">
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted small">Booking Reference:</span>
+              <span class="fw-bold text-dark" id="confirmed-booking-num">DE-2026-XXXX</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted small">Vehicle:</span>
+              <span class="fw-bold text-dark" id="confirmed-vehicle-name">Porsche 911</span>
+            </div>
+            <div class="d-flex justify-content-between mb-2">
+              <span class="text-muted small">Rental Period:</span>
+              <span class="fw-semibold text-dark" id="confirmed-dates">Dates</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span class="text-muted small">Total Authorized:</span>
+              <span class="fw-bold text-success" id="confirmed-total">$0.00</span>
+            </div>
+          </div>
+
+          <div class="d-flex flex-column gap-2">
+            <a href="/my-bookings.html" class="btn btn-de-primary py-2 justify-content-center">
+              <i class="bi bi-calendar-check me-1"></i> Go to My Bookings
+            </a>
+            <a href="/index.html" class="btn btn-de-outline py-2 justify-content-center">
+              Return to Home
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Application JS -->
+  <script src="/js/app.js"></script>
+  <script>
+    let checkoutVehicle = null;
+
+    async function initCheckout() {
+      // Must be authenticated
+      const user = await DriveEaseAuth.init();
+      if (!user) {
+        showToast('Please sign in to proceed with booking', 'info');
+        const params = new URLSearchParams(window.location.search);
+        const vId = params.get('id') || params.get('vehicleId');
+        setTimeout(() => {
+          window.location.href = `/login.html?redirect=booking.html?id=${vId}`;
+        }, 800);
+        return;
+      }
+
+      // Populate user info
+      document.getElementById('renter-name').value = user.fullName;
+      document.getElementById('renter-email').value = user.email;
+      document.getElementById('renter-phone').value = user.phone || '';
+
+      // Get vehicle ID
+      const params = new URLSearchParams(window.location.search);
+      const vehicleId = params.get('id') || params.get('vehicleId');
+      if (!vehicleId) {
+        window.location.href = '/vehicles.html';
+        return;
+      }
+
+      try {
+        const res = await DriveEaseApi.get(`/vehicles/${vehicleId}`);
+        checkoutVehicle = res.data;
+
+        // Populate vehicle card
+        document.getElementById('checkout-vehicle-img').src = checkoutVehicle.imageUrl || '';
+        document.getElementById('checkout-vehicle-name').textContent = checkoutVehicle.fullName;
+        document.getElementById('checkout-vehicle-cat').textContent = checkoutVehicle.category;
+        document.getElementById('checkout-vehicle-specs').textContent = `${checkoutVehicle.transmission} · ${checkoutVehicle.fuelType}`;
+
+        // Dates from draft or defaults
+        const draftJson = sessionStorage.getItem('pending_booking');
+        let draft = draftJson ? JSON.parse(draftJson) : null;
+
+        const toISO = d => d.toISOString().split('T')[0];
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        const defaultReturn = new Date(tomorrow);
+        defaultReturn.setDate(defaultReturn.getDate() + 3);
+
+        const pickupInput = document.getElementById('checkout-pickup-date');
+        const returnInput = document.getElementById('checkout-return-date');
+
+        pickupInput.min = toISO(today);
+        returnInput.min = toISO(tomorrow);
+
+        pickupInput.value = (draft && draft.startDate) ? draft.startDate : toISO(tomorrow);
+        returnInput.value = (draft && draft.endDate) ? draft.endDate : toISO(defaultReturn);
+
+        recalculateCheckout();
+      } catch (err) {
+        showToast(`Vehicle load error: ${err.message}`, 'error');
+      }
+
+      // Radio highlight
+      document.querySelectorAll('.payment-option').forEach(opt => {
+        opt.addEventListener('click', () => {
+          document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected', 'border-dark', 'bg-light'));
+          opt.classList.add('selected', 'border-dark', 'bg-light');
+          opt.querySelector('input').checked = true;
+        });
+      });
+    }
+
+    function recalculateCheckout() {
+      if (!checkoutVehicle) return;
+
+      const pStr = document.getElementById('checkout-pickup-date').value;
+      const rStr = document.getElementById('checkout-return-date').value;
+
+      if (!pStr || !rStr) return;
+
+      const pDate = new Date(pStr);
+      const rDate = new Date(rStr);
+      let diffDays = Math.ceil((rDate - pDate) / (1000 * 60 * 60 * 24));
+      if (diffDays <= 0) diffDays = 1;
+
+      const rate = Number(checkoutVehicle.dailyRate);
+      const subtotal = rate * diffDays;
+      let discount = 0;
+      if (diffDays >= 7) {
+        discount = subtotal * 0.10;
+      }
+      const netSub = subtotal - discount;
+      const tax = netSub * 0.10;
+      const deposit = Number(checkoutVehicle.securityDeposit || 200);
+      const total = netSub + tax + deposit;
+
+      document.getElementById('summary-days').textContent = `${diffDays} Day${diffDays > 1 ? 's' : ''}`;
+      document.getElementById('summary-rate').textContent = formatCurrency(rate);
+      document.getElementById('summary-subtotal').textContent = formatCurrency(subtotal);
+
+      const discRow = document.getElementById('summary-discount-row');
+      if (discount > 0) {
+        discRow.style.display = 'flex';
+        document.getElementById('summary-discount').textContent = `-${formatCurrency(discount)}`;
+      } else {
+        discRow.style.display = 'none';
+      }
+
+      document.getElementById('summary-tax').textContent = formatCurrency(tax);
+      document.getElementById('summary-deposit').textContent = formatCurrency(deposit);
+      document.getElementById('summary-total').textContent = formatCurrency(total);
+    }
+
+    async function submitFinalBooking() {
+      if (!checkoutVehicle) return;
+
+      const btn = document.getElementById('confirm-booking-btn');
+      btn.disabled = true;
+      btn.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Confirming with Fleet...`;
+
+      const paymentMethod = document.querySelector('input[name="payment-method"]:checked')?.value || 'CREDIT_CARD';
+
+      const payload = {
+        vehicleId: checkoutVehicle.id,
+        startDate: document.getElementById('checkout-pickup-date').value,
+        endDate: document.getElementById('checkout-return-date').value,
+        pickupLocation: document.getElementById('checkout-pickup-loc').value,
+        dropoffLocation: document.getElementById('checkout-dropoff-loc').value,
+        paymentMethod: paymentMethod,
+        customerNotes: document.getElementById('checkout-notes').value.trim()
+      };
+
+      try {
+        const res = await DriveEaseApi.post('/bookings', payload);
+        const booking = res.data;
+
+        // Clear session draft
+        sessionStorage.removeItem('pending_booking');
+
+        // Populate modal
+        document.getElementById('confirmed-booking-num').textContent = booking.bookingNumber;
+        document.getElementById('confirmed-vehicle-name').textContent = booking.vehicleName;
+        document.getElementById('confirmed-dates').textContent = `${formatDate(booking.startDate)} → ${formatDate(booking.endDate)}`;
+        document.getElementById('confirmed-total').textContent = formatCurrency(booking.totalAmount);
+
+        const modal = new bootstrap.Modal(document.getElementById('bookingSuccessModal'));
+        modal.show();
+      } catch (err) {
+        showToast(err.message || 'Booking submission failed. Please try again.', 'error');
+        btn.disabled = false;
+        btn.innerHTML = `<i class="bi bi-check-circle-fill me-1"></i> Confirm & Authorize Rental`;
+      }
+    }
+
+    window.addEventListener('currencyChanged', () => {
+      recalculateCheckout();
+    });
+
+    document.addEventListener('DOMContentLoaded', initCheckout);
+  </script>
+</body>
+</html>

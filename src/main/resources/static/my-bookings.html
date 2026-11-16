@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Bookings — DriveEase Customer Dashboard</title>
+  <!-- Bootstrap 5 CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <!-- Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+</head>
+<body>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar navbar-expand-lg navbar-driveease">
+    <div class="container">
+      <a class="navbar-brand navbar-brand-custom" href="/index.html">
+        <div class="brand-icon-box">
+          <i class="bi bi-car-front-fill"></i>
+        </div>
+        <span>DriveEase</span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-controls="navbarContent" aria-expanded="false">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link-custom" href="/index.html">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link-custom" href="/vehicles.html">Explore Vehicles</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link-custom" href="/premium-cars.html">Premium Cars</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link-custom active" href="/my-bookings.html">My Bookings</a>
+          </li>
+        </ul>
+
+        <!-- Right Side Nav: Currency Selector & Auth State -->
+        <div class="d-flex align-items-center gap-2 mt-3 mt-lg-0">
+          <!-- Currency Selector Dropdown -->
+          <div class="dropdown" id="currency-selector-wrapper">
+            <button class="btn btn-sm currency-dropdown-btn dropdown-toggle d-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill shadow-none"
+                    type="button" data-bs-toggle="dropdown" aria-expanded="false" id="active-currency-btn">
+              <span id="active-currency-flag">🇮🇳</span>
+              <span id="active-currency-text">INR (₹)</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1" style="min-width: 180px; border-radius: 12px; font-size: 0.85rem;">
+              <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size: 0.68rem; letter-spacing: 0.6px;">Select Currency</h6></li>
+              <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('INR')"><span>🇮🇳 INR</span><span class="fw-bold text-dark">₹ Rupee</span></button></li>
+              <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('USD')"><span>🇺🇸 USD</span><span class="fw-bold text-dark">$ Dollar</span></button></li>
+              <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('EUR')"><span>🇪🇺 EUR</span><span class="fw-bold text-dark">€ Euro</span></button></li>
+              <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('GBP')"><span>🇬🇧 GBP</span><span class="fw-bold text-dark">£ Pound</span></button></li>
+              <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('AED')"><span>🇦🇪 AED</span><span class="fw-bold text-dark">AED Dirham</span></button></li>
+            </ul>
+          </div>
+
+          <!-- Dynamic User / Auth Container -->
+          <div class="d-flex align-items-center gap-2" id="navbar-auth-actions">
+            <!-- Auth dropdown -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="py-4">
+    <div class="container">
+      <!-- Breadcrumbs -->
+      <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small">
+          <li class="breadcrumb-item"><a href="/index.html">Home</a></li>
+          <li class="breadcrumb-item active" aria-current="page">Customer Dashboard</li>
+        </ol>
+      </nav>
+
+      <!-- Customer Profile Overview Card -->
+      <div class="profile-overview-card shadow-sm">
+        <div class="profile-avatar-box" id="user-profile-avatar">
+          JD
+        </div>
+        <div class="flex-grow-1">
+          <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2">
+            <div>
+              <h2 class="fw-bold mb-1 fs-3" id="user-profile-name">Customer Name</h2>
+              <div class="text-muted small">
+                <span class="me-3"><i class="bi bi-envelope me-1"></i><span id="user-profile-email">email@example.com</span></span>
+                <span><i class="bi bi-telephone me-1"></i><span id="user-profile-phone">+1 555-0000</span></span>
+              </div>
+            </div>
+            <a href="/vehicles.html" class="btn btn-de-primary btn-sm-custom">
+              <i class="bi bi-plus-lg me-1"></i> Reserve Another Vehicle
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Metrics -->
+      <div class="row g-3 mb-4">
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-label">Total Reservations</span>
+              <div class="kpi-icon-box kpi-icon-navy">
+                <i class="bi bi-journal-bookmark-fill"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="cust-metric-total">0</div>
+            <div class="kpi-subtext">Lifetime bookings placed</div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-label">Active & Upcoming</span>
+              <div class="kpi-icon-box kpi-icon-info">
+                <i class="bi bi-clock-history"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="cust-metric-active">0</div>
+            <div class="kpi-subtext">Confirmed or in-progress rentals</div>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="kpi-card">
+            <div class="kpi-card-top">
+              <span class="kpi-label">Completed Trips</span>
+              <div class="kpi-icon-box kpi-icon-success">
+                <i class="bi bi-check-circle-fill"></i>
+              </div>
+            </div>
+            <div class="kpi-value" id="cust-metric-completed">0</div>
+            <div class="kpi-subtext">Successfully returned vehicles</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Bookings Section -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <h4 class="dashboard-card-title">
+            <i class="bi bi-car-front me-2 text-dark"></i>Active & Upcoming Rentals
+          </h4>
+        </div>
+        <div id="active-bookings-list">
+          <div class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+            <span class="ms-2 small text-muted">Retrieving your bookings...</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Past Bookings History -->
+      <div class="dashboard-card">
+        <div class="dashboard-card-header">
+          <h4 class="dashboard-card-title">
+            <i class="bi bi-archive me-2 text-dark"></i>Past Rental History
+          </h4>
+        </div>
+        <div id="past-bookings-list">
+          <div class="text-center py-4">
+            <div class="spinner-border spinner-border-sm text-dark" role="status"></div>
+            <span class="ms-2 small text-muted">Retrieving history...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Rental Details / Receipt Modal -->
+  <div class="modal fade" id="receiptModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-header border-bottom">
+          <h5 class="modal-title fw-bold">
+            <i class="bi bi-receipt me-2"></i>Rental Booking Receipt
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+              <span class="text-muted small d-block">Booking Reference</span>
+              <span class="fw-bold fs-5 text-dark" id="receipt-number">DE-2026-0000</span>
+            </div>
+            <span id="receipt-status" class="badge">CONFIRMED</span>
+          </div>
+
+          <div class="p-3 bg-light rounded-3 border mb-3">
+            <div class="fw-bold text-dark fs-6 mb-1" id="receipt-vehicle">Porsche 911 Carrera</div>
+            <div class="text-muted small mb-2" id="receipt-dates">Nov 20 → Nov 23 (3 Days)</div>
+            <div class="small"><i class="bi bi-geo-alt me-1 text-danger"></i>Pickup: <span id="receipt-pickup">Downtown Hub</span></div>
+          </div>
+
+          <div class="py-2">
+            <div class="price-row">
+              <span>Daily Rate</span>
+              <span class="fw-semibold text-dark" id="receipt-rate">$0.00</span>
+            </div>
+            <div class="price-row">
+              <span>Rental Subtotal</span>
+              <span class="fw-semibold text-dark" id="receipt-subtotal">$0.00</span>
+            </div>
+            <div class="price-row text-success" id="receipt-discount-row" style="display:none;">
+              <span>Weekly Discount (10% Off)</span>
+              <span class="fw-bold" id="receipt-discount">-$0.00</span>
+            </div>
+            <div class="price-row">
+              <span>Taxes & Fees (10%)</span>
+              <span class="fw-semibold text-dark" id="receipt-tax">$0.00</span>
+            </div>
+            <div class="price-row">
+              <span>Refundable Security Deposit</span>
+              <span class="fw-semibold text-dark" id="receipt-deposit">$200.00</span>
+            </div>
+            <div class="price-row price-row-total">
+              <span>Total Paid</span>
+              <span class="text-dark" id="receipt-total">$0.00</span>
+            </div>
+            <div class="price-row small text-muted">
+              <span>Payment Method</span>
+              <span class="fw-semibold text-dark" id="receipt-payment-method">Credit Card</span>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer border-top">
+          <button type="button" class="btn btn-de-outline btn-sm-custom" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-de-primary btn-sm-custom" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Print Receipt
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cancellation Confirmation Modal -->
+  <div class="modal fade" id="cancelConfirmModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg rounded-4">
+        <div class="modal-body text-center p-4">
+          <div class="d-inline-flex align-items-center justify-content-center rounded-circle bg-danger-subtle text-danger mb-3" style="width: 60px; height: 60px;">
+            <i class="bi bi-exclamation-triangle-fill fs-2"></i>
+          </div>
+          <h4 class="fw-bold mb-2">Confirm Cancellation</h4>
+          <p class="text-muted small mb-4" id="cancel-modal-vehicle-text">
+            Are you sure you want to cancel this booking? Your security deposit and rental fee will be refunded per our flexible cancellation policy.
+          </p>
+          <div class="d-flex justify-content-center gap-2">
+            <button type="button" class="btn btn-de-outline" data-bs-dismiss="modal">Keep Booking</button>
+            <button type="button" class="btn btn-danger" id="confirm-cancel-btn" onclick="confirmCancelBooking()">
+              Yes, Cancel Booking
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer-driveease py-4">
+    <div class="container text-center small" style="color: #CBD5E1;">
+      &copy; 2026 DriveEase Inc. Customer Portal. All rights reserved.
+    </div>
+  </footer>
+
+  <!-- Bootstrap Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Application & Dashboard JS -->
+  <script src="/js/app.js"></script>
+  <script src="/js/dashboard.js"></script>
+</body>
+</html>
