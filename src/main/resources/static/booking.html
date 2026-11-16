@@ -27,16 +27,16 @@
         <div class="dropdown" id="currency-selector-wrapper">
           <button class="btn btn-sm currency-dropdown-btn dropdown-toggle d-flex align-items-center gap-1.5 px-3 py-1.5 rounded-pill shadow-none"
                   type="button" data-bs-toggle="dropdown" aria-expanded="false" id="active-currency-btn">
-            <span id="active-currency-flag">🇮🇳</span>
+            <span id="active-currency-flag" class="currency-symbol-badge">₹</span>
             <span id="active-currency-text">INR (₹)</span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1" style="min-width: 180px; border-radius: 12px; font-size: 0.85rem;">
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border mt-1" style="min-width: 220px; border-radius: 12px; font-size: 0.85rem;">
             <li><h6 class="dropdown-header text-uppercase text-muted" style="font-size: 0.68rem; letter-spacing: 0.6px;">Select Currency</h6></li>
-            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('INR')"><span>🇮🇳 INR</span><span class="fw-bold text-dark">₹ Rupee</span></button></li>
-            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('USD')"><span>🇺🇸 USD</span><span class="fw-bold text-dark">$ Dollar</span></button></li>
-            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('EUR')"><span>🇪🇺 EUR</span><span class="fw-bold text-dark">€ Euro</span></button></li>
-            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('GBP')"><span>🇬🇧 GBP</span><span class="fw-bold text-dark">£ Pound</span></button></li>
-            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-1.5" type="button" onclick="DriveEaseCurrency.setCurrency('AED')"><span>🇦🇪 AED</span><span class="fw-bold text-dark">AED Dirham</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-2" type="button" data-currency="INR" onclick="DriveEaseCurrency.setCurrency('INR')"><span><span class="badge bg-light text-dark border me-2 font-monospace" style="min-width: 24px; text-align: center;">₹</span>INR</span><span class="fw-bold text-dark">Indian Rupee</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-2" type="button" data-currency="USD" onclick="DriveEaseCurrency.setCurrency('USD')"><span><span class="badge bg-light text-dark border me-2 font-monospace" style="min-width: 24px; text-align: center;">$</span>USD</span><span class="fw-bold text-dark">US Dollar</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-2" type="button" data-currency="EUR" onclick="DriveEaseCurrency.setCurrency('EUR')"><span><span class="badge bg-light text-dark border me-2 font-monospace" style="min-width: 24px; text-align: center;">€</span>EUR</span><span class="fw-bold text-dark">Euro</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-2" type="button" data-currency="GBP" onclick="DriveEaseCurrency.setCurrency('GBP')"><span><span class="badge bg-light text-dark border me-2 font-monospace" style="min-width: 24px; text-align: center;">£</span>GBP</span><span class="fw-bold text-dark">British Pound</span></button></li>
+            <li><button class="dropdown-item d-flex align-items-center justify-content-between py-2" type="button" data-currency="AED" onclick="DriveEaseCurrency.setCurrency('AED')"><span><span class="badge bg-light text-dark border me-2 font-monospace" style="min-width: 24px; text-align: center;">د.إ</span>AED</span><span class="fw-bold text-dark">UAE Dirham</span></button></li>
           </ul>
         </div>
 

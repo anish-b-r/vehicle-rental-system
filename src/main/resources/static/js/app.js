@@ -83,11 +83,11 @@ const DriveEaseCurrency = {
     AED: 'AED '
   },
   meta: {
-    INR: { flag: '🇮🇳', label: 'INR (₹)', name: 'Indian Rupee' },
-    USD: { flag: '🇺🇸', label: 'USD ($)', name: 'US Dollar' },
-    EUR: { flag: '🇪🇺', label: 'EUR (€)', name: 'Euro' },
-    GBP: { flag: '🇬🇧', label: 'GBP (£)', name: 'British Pound' },
-    AED: { flag: '🇦🇪', label: 'AED (د.إ)', name: 'UAE Dirham' }
+    INR: { symbol: '₹', label: 'INR (₹)', name: 'Indian Rupee' },
+    USD: { symbol: '$', label: 'USD ($)', name: 'US Dollar' },
+    EUR: { symbol: '€', label: 'EUR (€)', name: 'Euro' },
+    GBP: { symbol: '£', label: 'GBP (£)', name: 'British Pound' },
+    AED: { symbol: 'د.إ', label: 'AED (د.إ)', name: 'UAE Dirham' }
   },
 
   async init() {
@@ -155,8 +155,23 @@ const DriveEaseCurrency = {
     const flagEl = document.getElementById('active-currency-flag');
     const textEl = document.getElementById('active-currency-text');
     const m = this.meta[this.current] || this.meta['INR'];
-    if (flagEl) flagEl.textContent = m.flag;
-    if (textEl) textEl.textContent = m.label;
+    if (flagEl) {
+      flagEl.className = 'currency-symbol-badge';
+      flagEl.textContent = m.symbol;
+    }
+    if (textEl) {
+      textEl.textContent = m.label;
+    }
+
+    // Highlight active selection in all dropdowns
+    document.querySelectorAll('#currency-selector-wrapper .dropdown-item').forEach(item => {
+      const cur = item.getAttribute('data-currency');
+      if (cur === this.current) {
+        item.classList.add('active', 'fw-bold');
+      } else {
+        item.classList.remove('active', 'fw-bold');
+      }
+    });
   }
 };
 
@@ -297,8 +312,162 @@ function formatDate(dateStr) {
   return dateStr;
 }
 
+// ==========================================================================
+// Render Free Instance Server Health & Cold-Start Monitor
+// ==========================================================================
+const RenderServerMonitor = {
+  isAwake: false,
+  elapsedSeconds: 0,
+  timerInterval: null,
+  bannerEl: null,
+
+  init() {
+    this.createBannerElement();
+    this.checkServer();
+  },
+
+  createBannerElement() {
+    if (document.getElementById('render-server-status-banner')) return;
+
+    const banner = document.createElement('div');
+    banner.id = 'render-server-status-banner';
+    banner.innerHTML = `
+      <div class="render-banner-inner">
+        <div class="render-banner-left">
+          <div class="render-spinner-ring" id="render-banner-spinner"></div>
+          <div>
+            <div class="render-banner-title">
+              <span id="render-banner-headline">⚡ Waking up Render Cloud Server...</span>
+              <span class="render-time-badge" id="render-banner-timer">0s</span>
+            </div>
+            <div class="render-banner-desc" id="render-banner-sub">
+              Free-tier instances spin down after inactivity and take ~30–50s to wake up on cold start. Connecting automatically...
+            </div>
+          </div>
+        </div>
+        <div class="d-none d-md-block text-end">
+          <span class="badge bg-light text-dark font-monospace" style="font-size: 0.72rem; padding: 4px 8px;">Render Free Tier • Java 21</span>
+        </div>
+      </div>
+    `;
+    document.body.prepend(banner);
+    this.bannerEl = banner;
+  },
+
+  checkServer() {
+    if (this.isAwake) return;
+
+    const startTime = Date.now();
+    this.timerInterval = setInterval(() => {
+      this.elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      const timerEl = document.getElementById('render-banner-timer');
+      if (timerEl) {
+        timerEl.textContent = `${this.elapsedSeconds}s elapsed`;
+      }
+      // If server took more than 1.8s to respond, show the banner
+      if (this.elapsedSeconds >= 2 && !this.isAwake && this.bannerEl) {
+        this.bannerEl.classList.add('banner-visible');
+      }
+    }, 1000);
+
+    this.pollUntilAwake();
+  },
+
+  async pollUntilAwake() {
+    let attempts = 0;
+    while (!this.isAwake) {
+      attempts++;
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 6000);
+        const res = await fetch('/api/currency/rates', { signal: controller.signal, cache: 'no-store' });
+        clearTimeout(timeoutId);
+
+        if (res.ok) {
+          const json = await res.json();
+          if (json && json.success) {
+            this.handleServerAwake();
+            return;
+          }
+        }
+      } catch (e) {
+        // Cold start in progress, update message
+        const headline = document.getElementById('render-banner-headline');
+        const sub = document.getElementById('render-banner-sub');
+        if (headline && this.elapsedSeconds >= 4) {
+          headline.innerHTML = `⚡ Render Server Booting Up (Attempt ${attempts})...`;
+        }
+        if (sub && this.elapsedSeconds >= 20) {
+          sub.textContent = 'Spring Boot container is initializing (~30–50s). Please remain on the page, connecting automatically...';
+        }
+      }
+      await new Promise(r => setTimeout(r, 2500));
+    }
+  },
+
+  handleServerAwake() {
+    this.isAwake = true;
+    clearInterval(this.timerInterval);
+
+    this.injectNavbarIndicator();
+
+    if (this.bannerEl && this.bannerEl.classList.contains('banner-visible')) {
+      this.bannerEl.classList.remove('banner-error');
+      this.bannerEl.classList.add('banner-connected');
+
+      const headline = document.getElementById('render-banner-headline');
+      const sub = document.getElementById('render-banner-sub');
+      const spinner = document.getElementById('render-banner-spinner');
+      const timer = document.getElementById('render-banner-timer');
+
+      if (spinner) {
+        spinner.className = 'bi bi-check-circle-fill fs-5 text-white';
+        spinner.style.border = 'none';
+        spinner.style.animation = 'none';
+      }
+      if (headline) {
+        headline.textContent = '✅ Render Server Connected & Ready!';
+      }
+      if (timer) {
+        timer.textContent = `Awake in ${this.elapsedSeconds}s`;
+        timer.style.backgroundColor = 'rgba(255,255,255,0.25)';
+        timer.style.color = '#FFFFFF';
+      }
+      if (sub) {
+        sub.textContent = 'Spring Boot backend and database services are online and active.';
+      }
+
+      window.dispatchEvent(new CustomEvent('renderServerAwake'));
+
+      setTimeout(() => {
+        if (this.bannerEl) {
+          this.bannerEl.classList.remove('banner-visible');
+          setTimeout(() => {
+            this.bannerEl.remove();
+          }, 450);
+        }
+      }, 2500);
+    } else {
+      window.dispatchEvent(new CustomEvent('renderServerAwake'));
+    }
+  },
+
+  injectNavbarIndicator() {
+    const authActions = document.getElementById('navbar-auth-actions');
+    if (authActions && !document.getElementById('render-live-indicator')) {
+      const pill = document.createElement('div');
+      pill.id = 'render-live-indicator';
+      pill.className = 'render-live-indicator d-none d-lg-inline-flex me-2';
+      pill.title = 'Render Web Service: Active & Live (Singapore)';
+      pill.innerHTML = `<span class="live-dot"></span><span>Server Online</span>`;
+      authActions.parentNode.insertBefore(pill, authActions);
+    }
+  }
+};
+
 // Auto-run auth & currency verification on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
+  RenderServerMonitor.init();
   DriveEaseCurrency.init();
   DriveEaseAuth.init();
 });

@@ -817,11 +817,22 @@ img {
     background-color: #F8FAFC;
   }
 
-  /* Currency Dropdown in Mobile Navbar */
+  /* Currency Dropdown in Mobile Navbar: Anchored to left edge and expanding rightward */
+  #currency-selector-wrapper {
+    position: relative !important;
+  }
+
+  .navbar-driveease #currency-selector-wrapper .dropdown-menu,
   .navbar-driveease .dropdown-menu {
-    max-width: calc(100vw - 32px);
-    right: 0 !important;
-    left: auto !important;
+    left: 0 !important;
+    right: auto !important;
+    min-width: 230px !important;
+    max-width: calc(100vw - 32px) !important;
+    transform: none !important;
+    top: 100% !important;
+    margin-top: 8px !important;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, 0.2), 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 12px !important;
   }
 
   /* Hero Section */
@@ -1093,6 +1104,174 @@ img {
   border-color: #CBD5E1;
   color: #0F172A;
 }
+
+.currency-symbol-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: #F1F5F9;
+  border: 1px solid #CBD5E1;
+  color: #0F172A;
+  font-weight: 700;
+  font-size: 0.65rem;
+  line-height: 1;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+#currency-selector-wrapper {
+  position: relative;
+}
+
+#currency-selector-wrapper .dropdown-menu {
+  z-index: 1060;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 14px 35px rgba(0, 0, 0, 0.12), 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+#currency-selector-wrapper .dropdown-item {
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  transition: all 0.15s ease;
+}
+
+#currency-selector-wrapper .dropdown-item:hover,
+#currency-selector-wrapper .dropdown-item:focus {
+  background-color: #F1F5F9;
+  color: #0F172A;
+}
+
+@media (min-width: 992px) {
+  .navbar-driveease #currency-selector-wrapper .dropdown-menu {
+    right: 0 !important;
+    left: auto !important;
+    min-width: 220px;
+  }
+}
+
+/* ==========================================================================
+   Render Free Instance Server Health & Spin-Up Banner
+   ========================================================================== */
+#render-server-status-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 99999;
+  background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+  color: #FFFFFF;
+  padding: 0.65rem 1rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  font-family: inherit;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+#render-server-status-banner.banner-visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#render-server-status-banner.banner-connected {
+  background: linear-gradient(135deg, #065F46 0%, #047857 100%) !important;
+}
+
+#render-server-status-banner.banner-error {
+  background: linear-gradient(135deg, #991B1B 0%, #B91C1C 100%) !important;
+}
+
+.render-banner-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.render-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.render-spinner-ring {
+  width: 1.15rem;
+  height: 1.15rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #F59E0B;
+  border-radius: 50%;
+  animation: renderSpin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes renderSpin {
+  to { transform: rotate(360deg); }
+}
+
+.render-banner-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.render-banner-desc {
+  font-size: 0.74rem;
+  color: #94A3B8;
+  line-height: 1.35;
+}
+
+.render-time-badge {
+  font-family: monospace;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1px 7px;
+  border-radius: 9999px;
+  font-size: 0.72rem;
+  color: #FDE047;
+  font-weight: 600;
+}
+
+.render-live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.72rem;
+  color: #475569;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  font-weight: 500;
+}
+
+.render-live-indicator .live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: liveDotPulse 2s infinite;
+}
+
+@keyframes liveDotPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 5px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
 
 /* ==========================================================================
    DriveEase — Luxury Automotive Editorial Design Tokens & Components

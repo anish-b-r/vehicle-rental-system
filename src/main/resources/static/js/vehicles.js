@@ -277,6 +277,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // Auto-reload vehicles if initial load occurred while Render server was waking up
+  window.addEventListener('renderServerAwake', () => {
+    if (allVehicles.length === 0 && document.getElementById('vehicles-grid')) {
+      loadVehicles();
+    }
+  });
+
   // Only run if on vehicles page
   if (document.getElementById('vehicles-grid')) {
     loadVehicles();
