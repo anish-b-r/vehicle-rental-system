@@ -193,16 +193,37 @@ The database is pre-seeded with vehicles, sample users, and existing bookings:
 
 ---
 
-## 🗄️ MySQL 8 Configuration (Optional)
+---
 
-By default, the application runs on H2 (in MySQL compatibility mode) with zero configuration needed. To connect to an external MySQL 8 server:
+## ☁️ Deploying to Render
 
-1. Create the database in MySQL:
-   ```sql
-   CREATE DATABASE driveease_db CHARACTER SET utf8mb4;
-   ```
-2. Run Spring Boot with the MySQL profile:
-   ```powershell
-   .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=mysql
-   ```
-   Or adjust credentials in `src/main/resources/application-mysql.properties`.
+DriveEase includes a pre-configured multi-stage `Dockerfile` and `render.yaml` Blueprint for deployment on [Render](https://render.com).
+
+### Option 1: 1-Click Blueprint (Recommended)
+1. Push this repository to your GitHub account (`git push origin main`).
+2. Log in to [Render Dashboard](https://dashboard.render.com).
+3. Click **New +** → **Blueprint**.
+4. Select your `vehicle-rental-system` repository.
+5. Click **Apply**. Render will automatically detect `render.yaml`, build the Docker container with Java 21, and deploy the service.
+
+### Option 2: Manual Web Service Setup
+1. In Render Dashboard, click **New +** → **Web Service**.
+2. Connect your GitHub repository.
+3. Configure the following settings:
+   - **Name**: `driveease-rental` (or your choice)
+   - **Language / Environment**: `Docker`
+   - **Dockerfile Path**: `./Dockerfile`
+   - **Instance Type**: `Free`
+4. Click **Create Web Service**.
+5. Once built (takes ~2 minutes on first build), your live URL will be ready at `https://your-service-name.onrender.com`.
+
+> [!NOTE]
+> **Zero-Config Database**: By default, the application runs on embedded H2 in MySQL compatibility mode. On startup, it automatically seeds all 36 authentic vehicles, user accounts, sample bookings, and live currency rates.
+> 
+> **Connecting External MySQL (Optional)**: If you wish to use an external managed MySQL database (e.g. from Aiven, Clever Cloud, or Supabase), simply add these Environment Variables in your Render Service Dashboard:
+> - `SPRING_DATASOURCE_URL`: `jdbc:mysql://<host>:<port>/<dbname>?useSSL=true`
+> - `SPRING_DATASOURCE_DRIVER_CLASS_NAME`: `com.mysql.cj.jdbc.Driver`
+> - `SPRING_DATASOURCE_USERNAME`: `<db_user>`
+> - `SPRING_DATASOURCE_PASSWORD`: `<db_password>`
+> - `SPRING_JPA_DATABASE_PLATFORM`: `org.hibernate.dialect.MySQLDialect`
+
